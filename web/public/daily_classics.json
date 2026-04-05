@@ -1,0 +1,97 @@
+{
+  "01-01": [
+    {
+      "title_zh": "示例影片 A",
+      "title_en": "Sample Film A",
+      "year": 1993,
+      "release_date": "1993-01-01",
+      "director": "Sample Director",
+      "director_zh": "示例导演",
+      "origin_countries": ["Hong Kong"],
+      "genres": ["剧情"],
+      "douban_rating": 7.5,
+      "douban_count": 100,
+      "score": 4.0,
+      "premiere_cinema": "",
+      "hkfaa_best_picture": false,
+      "douban_matched": false,
+      "poster_url": "https://image.tmdb.org/t/p/w500/2J5Np5q9dbXp0BCEWdnAKYQIsvn.jpg"
+    }
+  ],
+  "03-11": [
+    {
+      "title_zh": "示例影片 B",
+      "title_en": "Sample Film B",
+      "year": 1993,
+      "release_date": "1993-03-11",
+      "director": "Sample Director",
+      "director_zh": "示例导演",
+      "origin_countries": ["Hong Kong"],
+      "genres": ["喜剧", "动作"],
+      "douban_rating": 6.0,
+      "douban_count": 50,
+      "score": 3.5,
+      "premiere_cinema": "",
+      "hkfaa_best_picture": false,
+      "douban_matched": false,
+      "poster_url": "https://image.tmdb.org/t/p/w500/2J5Np5q9dbXp0BCEWdnAKYQIsvn.jpg"
+    }
+  ],
+  "06-15": [
+    {
+      "title_zh": "示例影片 C",
+      "title_en": "Sample Film C",
+      "year": 2001,
+      "release_date": "2001-06-15",
+      "director": "Sample Director",
+      "director_zh": "示例导演",
+      "origin_countries": ["Hong Kong"],
+      "genres": ["爱情"],
+      "douban_rating": 8.0,
+      "douban_count": 200,
+      "score": 4.5,
+      "premiere_cinema": "",
+      "hkfaa_best_picture": false,
+      "douban_matched": false,
+      "poster_url": "https://image.tmdb.org/t/p/w500/8cch2z0pOAmuG0B9UNhvbuvv2WQ.jpg"
+    }
+  ],
+  "10-28": [
+    {
+      "title_zh": "示例影片 D",
+      "title_en": "Sample Film D",
+      "year": 1998,
+      "release_date": "1998-10-28",
+      "director": "Sample Director",
+      "director_zh": "示例导演",
+      "origin_countries": ["Hong Kong"],
+      "genres": ["剧情", "爱情"],
+      "douban_rating": 7.9,
+      "douban_count": 80,
+      "score": 4.2,
+      "premiere_cinema": "",
+      "hkfaa_best_picture": false,
+      "douban_matched": false,
+      "poster_url": "https://image.tmdb.org/t/p/w500/8cch2z0pOAmuG0B9UNhvbuvv2WQ.jpg"
+    }
+  ],
+  "12-25": [
+    {
+      "title_zh": "示例影片 E",
+      "title_en": "Sample Film E",
+      "year": 2005,
+      "release_date": "2005-12-25",
+      "director": "Sample Director",
+      "director_zh": "示例导演",
+      "origin_countries": ["Hong Kong"],
+      "genres": ["喜剧"],
+      "douban_rating": 6.5,
+      "douban_count": 30,
+      "score": 3.8,
+      "premiere_cinema": "",
+      "hkfaa_best_picture": false,
+      "douban_matched": false,
+      "poster_url": "https://image.tmdb.org/t/p/w500/j2Ysz6Cq8LvxwMMNMJvFUTul9zD.jpg"
+    }
+  ]
+}

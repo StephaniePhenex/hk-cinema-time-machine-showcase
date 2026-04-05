@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#dce4e0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Jumbo Time Machine</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Noto+Serif+SC:wght@700;900&display=swap');
+    .cinema-title { font-family: 'Oswald', sans-serif; }
+    .vintage-text { font-family: 'Noto Serif SC', serif; }
+    .card-container { width: 360px; max-width: 95vw; height: auto; }
+    .result-card-wrapper { overflow: hidden; }
+    .hero-section { aspect-ratio: 3 / 4; width: 100%; }
+    .fade-in { animation: fadeIn 0.8s ease-out forwards; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hidden { display: none; }
+    .cyber-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(120deg, rgba(3, 15, 30, 0.52), rgba(34, 8, 45, 0.45)),
+        radial-gradient(circle at 20% 20%, rgba(0, 229, 255, 0.28), transparent 45%),
+        radial-gradient(circle at 80% 75%, rgba(255, 77, 77, 0.26), transparent 42%),
+        url('/images/cyberpunk_jumbo.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .cyber-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: rgba(0, 0, 0, 0.12);
+    }
+    .cyber-layer {
+      position: relative;
+      z-index: 2;
+    }
+    .cyber-panel {
+      width: min(460px, 82vw);
+      padding: 30px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(128, 255, 255, 0.5);
+      box-shadow: 0 0 20px rgba(128, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .cyber-label {
+      color: #80ffff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .cyber-input {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      min-height: 44px;
+      box-sizing: border-box;
+      color: #ffffff;
+      font-family: "Courier New", monospace;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid #80ffff;
+      border-radius: 6px;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    /* iOS/Safari: 取消 date 默认外观，避免与 text 视觉不一致 */
+    input[type="date"].cyber-input,
+    input[type="text"].cyber-input {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    /* iOS: date 空值时 display:inline-flex 导致高度塌陷，强制 block + 与昵称框同高 */
+    input[type="date"].cyber-input {
+      display: block !important;
+      min-width: 100%;
+      min-height: 44px;
+    }
+    .cyber-input::placeholder {
+      color: rgba(255, 255, 255, 0.35);
+    }
+    .cyber-input:focus {
+      border-color: #00e5ff;
+      box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.25);
+    }
+    .cyber-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      min-width: 190px;
+      margin: 0 auto;
+      padding: 12px 40px;
+      background: #b84dff;
+      border-radius: 4px;
+      border: none;
+      box-shadow: 0 0 15px rgba(184, 77, 255, 0.75), 0 0 28px rgba(184, 77, 255, 0.38);
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.16s ease, filter 0.16s ease;
+    }
+    .cyber-button:hover {
+      filter: brightness(1.04);
+    }
+    .cyber-button:active {
+      transform: translateY(1px) scale(0.99);
+    }
+    .cyber-button-main {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+    }
+    .cyber-button-sub {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      line-height: 1;
+    }
+    /* Jumbo Time Machine：灰墨绿色 + 加粗 */
+    .neon-title {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      color: #2f3e3a;
+    }
+    .neon-title-small {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      color: #2f3e3a;
+    }
+    /* 拍立得/胶片边框 - 灰墨绿主调 */
+    .polaroid-frame {
+      background: #dce4e0;
+      padding: 12px 12px 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(0,0,0,0.06);
+      position: relative;
+    }
+    .polaroid-frame::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .film-perforations {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 4px;
+      gap: 8px;
+    }
+    .film-perforations .hole {
+      width: 10px;
+      height: 8px;
+      background: #1a1a1a;
+      flex-shrink: 0;
+    }
+    .film-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #1a1a1a;
+    }
+    .polaroid-photo {
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 6px 0;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+    }
+    /* 场记板分享页（参考图高还原） */
+    .share-page-wrapper {
+      width: 100%;
+      max-width: min(440px, 92vw);
+      padding: 8px 0 16px;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+    }
+    .clapperboard-wrap {
+      width: 100%;
+      padding: 0;
+      box-sizing: border-box;
+      position: relative;
+    }
+    .cyber-scene {
+      width: 100%;
+      aspect-ratio: 4 / 5.4;
+      border-radius: 18px;
+      padding: 10px 10px;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(8, 13, 24, 0.5), rgba(7, 10, 18, 0.76)),
+        radial-gradient(circle at 20% 18%, rgba(34, 211, 238, 0.16), transparent 44%),
+        radial-gradient(circle at 80% 22%, rgba(217, 70, 239, 0.14), transparent 40%),
+        url('/images/cyberpunk_jumbo.png');
+      background-size: cover, cover, cover, cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.52);
+    }
+    .cyber-scene::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(109, 151, 184, 0.28);
+      border-radius: 18px;
+      pointer-events: none;
+    }
+    .cyber-board-shell {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 50%;
+      bottom: auto;
+      transform: translateY(-50%) scale(0.7);
+      transform-origin: center center;
+      aspect-ratio: 4 / 3.35;
+      z-index: 2;
+      animation: clapper-scale-in 480ms ease-out both;
+    }
+    @keyframes clapper-scale-in {
+      from {
+        transform: translateY(-50%) scale(1);
+      }
+      to {
+        transform: translateY(-50%) scale(0.7);
+      }
+    }
+    .cyber-open-clapper {
+      position: absolute;
+      top: -13%;
+      left: 0;
+      width: 100%;
+      height: 41px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: linear-gradient(180deg, #1f2327, #0d1014);
+      transform: rotate(-10deg);
+      transform-origin: left bottom;
+      overflow: hidden;
+      box-shadow: 0 10px 18px rgba(0,0,0,0.45);
+      z-index: 3;
+    }
+    .cyber-lower-clapper {
+      height: 34px;
+      position: relative;
+      border-bottom: 2px solid rgba(255,255,255,0.08);
+      overflow: hidden;
+      background: linear-gradient(180deg, #191d21, #111417);
+    }
+    .cyber-open-neon {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 7px;
+      height: 5px;
+      background: rgba(125, 249, 255, 0.92);
+      box-shadow: 0 0 16px rgba(34, 211, 238, 0.95), 0 0 30px rgba(34, 211, 238, 0.55);
+      z-index: 2;
+    }
+    .cyber-open-stripes {
+      height: 100%;
+      display: flex;
+      width: 118%;
+      transform: translateX(-6%);
+      z-index: 1;
+      position: relative;
+    }
+    .cyber-stripe {
+      flex: 1;
+      position: relative;
+    }
+    .cyber-stripe::before {
+      content: "";
+      position: absolute;
+      top: -14px;
+      left: 4px;
+      width: 22px;
+      height: 92px;
+      background: linear-gradient(180deg, rgba(240, 244, 248, 0.84), rgba(170, 179, 189, 0.6));
+      transform: skewX(35deg) rotate(-10deg);
+      border-radius: 1px;
+    }
+    .cyber-clapperboard {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #161a1e, #0f1317);
+      border: 1px solid rgba(122, 245, 255, 0.7);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow:
+        0 18px 24px rgba(0,0,0,0.42),
+        0 0 24px rgba(34, 211, 238, 0.42),
+        0 0 50px rgba(34, 211, 238, 0.32),
+        0 0 78px rgba(34, 211, 238, 0.2),
+        inset 0 0 0 1px rgba(34, 211, 238, 0.48),
+        inset 0 0 18px rgba(34, 211, 238, 0.16);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .cyber-clapper-body {
+      flex: 1;
+      padding: 9px 9px 7px;
+      position: relative;
+      width: 100%;
+      color: #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, rgba(17, 21, 25, 0.86), rgba(14, 18, 22, 0.95));
+    }
+    .cyber-circuit-overlay {
+      position: absolute;
+      inset: 0;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+    .cyber-grid-row {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 12px;
+      margin-bottom: 5px;
+      position: relative;
+      z-index: 1;
+    }
+    .cyber-grid-col { min-width: 0; }
+    .cyber-grid-col-right { text-align: right; }
+    .cyber-field-label {
+      display: block;
+      color: rgba(156, 163, 175, 0.72);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .cyber-production-title {
+      color: #22d3ee;
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 1.02;
+      text-shadow: 0 0 10px rgba(34, 211, 238, 0.86), 0 0 22px rgba(34, 211, 238, 0.42);
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      margin: 0;
+    }
+    .cyber-sub-title {
+      margin: 8px 0 0;
+      color: rgba(107, 114, 128, 0.9);
+      font-size: 10px;
+      font-family: "Courier New", monospace;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .cyber-year-value {
+      margin: 2px 0 0;
+      color: #f8b25b;
+      font-size: 30px;
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: 0 0 12px rgba(251, 146, 60, 0.7);
+    }
+    .cyber-divider {
+      border-top: 1px solid rgba(75, 85, 99, 0.55);
+      margin: 4px 0 5px;
+      position: relative;
+      z-index: 1;
+    }
+    .cyber-director-block {
+      margin-bottom: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .cyber-director-name {
+      margin: 0;
+      color: #22d3ee;
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.06;
+      text-shadow: 0 0 8px rgba(34, 211, 238, 0.72);
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .cyber-message-block {
+      margin-top: 0;
+      position: relative;
+      z-index: 1;
+      padding-top: 0;
+    }
+    .cyber-message-text {
+      margin: 0;
+      color: #e45bf8;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.14;
+      white-space: pre-line;
+      text-shadow: 0 0 6px rgba(217, 70, 239, 0.5);
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .cyber-system-ref {
+      position: absolute;
+      right: 12px;
+      bottom: 2px;
+      color: rgba(75, 85, 99, 0.66);
+      font-size: 8px;
+      font-family: "Courier New", monospace;
+      letter-spacing: 0.08em;
+    }
+    /* 手机端自适应 */
+    html { -webkit-tap-highlight-color: transparent; }
+    input, button { touch-action: manipulation; }
+    input[type="date"], input[type="text"] { font-size: 16px; }
+    @media (max-width: 480px) {
+      .cyber-panel { width: min(86vw, 340px); padding: 22px; }
+      .cyber-button { width: 100%; min-width: 0; }
+      .card-container { max-width: 100%; padding: 0 0.5rem; }
+      .result-card-wrapper { max-width: 100%; }
+      .polaroid-frame { padding: 10px 10px 16px; }
+      .share-page-wrapper { max-width: min(88vw, 350px); padding: 4px 0 12px; }
+      .cyber-scene { padding: 8px 7px; }
+      .cyber-board-shell { left: 12px; right: 12px; top: 50%; bottom: auto; transform: translateY(-50%) scale(0.7); transform-origin: center center; aspect-ratio: 4 / 3.35; animation: clapper-scale-in 480ms ease-out both; }
+      .cyber-open-clapper { height: 34px; top: -10%; }
+      .cyber-lower-clapper { height: 29px; }
+      .cyber-open-neon { top: 6px; height: 4px; }
+      .cyber-clapper-body { padding: 7px 7px 6px; }
+      .cyber-field-label { font-size: 9px; margin-bottom: 4px; }
+      .cyber-production-title { font-size: 20px; }
+      .cyber-sub-title { font-size: 10px; margin-top: 6px; }
+      .cyber-year-value { font-size: 26px; }
+      .cyber-director-name { font-size: 20px; }
+      .cyber-message-text { font-size: 13px; }
+      .cyber-message-block { margin-top: 0; padding-top: 0; }
+      .cyber-message-text { line-height: 1.12; }
+    }
+    @media (max-width: 380px) {
+      .neon-title { font-size: 1.5rem; }
+      .hero-section h2 { font-size: 1.25rem !important; }
+    }
+
+    /* WebView/legacy fallback: some engines fail Tailwind v4 oklch color tokens */
+    @supports not (color: oklch(0 0 0)) {
+      #download-btn,
+      #back-from-share {
+        background-color: #d4d4d8 !important; /* zinc-300 */
+        color: #334155 !important; /* slate-700 */
+      }
+
+      #share-btn,
+      #share-export-btn {
+        background-color: #71717a !important; /* zinc-500 */
+        color: #ffffff !important;
+      }
+
+      #download-btn:hover,
+      #back-from-share:hover {
+        background-color: #a1a1aa !important; /* zinc-400 */
+      }
+
+      #share-btn:hover,
+      #share-export-btn:hover {
+        background-color: #52525b !important; /* zinc-600 */
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 font-sans relative overflow-x-hidden text-slate-800" style="min-height: 100dvh; padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right)); padding-top: max(1rem, env(safe-area-inset-top)); padding-bottom: max(1rem, env(safe-area-inset-bottom));">
+  <div class="cyber-bg" aria-hidden="true"></div>
+  <div class="cyber-overlay" aria-hidden="true"></div>
+
+  <div id="loading-state" class="p-8 rounded-[2.5rem] shadow-2xl w-full max-w-sm text-center z-10 hidden" style="background-color: #e2e8e6;">
+    <h2 class="cinema-title text-xl mb-3 text-slate-700">加载中</h2>
+    <p class="text-slate-500 text-sm">正在准备你的时空数据...</p>
+  </div>
+
+  <div id="error-state" class="p-8 rounded-[2.5rem] shadow-2xl w-full max-w-sm text-center z-10 hidden" style="background-color: #e2e8e6;">
+    <h2 class="cinema-title text-xl mb-3 text-red-700">发生错误</h2>
+    <p id="error-message" class="text-slate-600 text-sm mb-6"></p>
+    <button id="retry-btn" class="bg-zinc-500 text-white py-3 px-6 rounded-xl cinema-title tracking-widest hover:bg-zinc-600 transition-all">
+      重试
+    </button>
+  </div>
+
+  <div id="input-page" class="cyber-layer w-full flex justify-center">
+    <div class="cyber-panel">
+      <div class="space-y-6 text-left">
+        <div>
+          <label class="cyber-label" for="userName">Nickname</label>
+          <input type="text" id="userName" placeholder="你的生日电影" class="cyber-input">
+        </div>
+        <div>
+          <label class="cyber-label" for="birthDate">Birthday</label>
+          <input type="date" id="birthDate" class="cyber-input" value="1990-01-01">
+        </div>
+        <div class="pt-3">
+          <button id="generate-btn" class="cyber-button">
+            <span class="cyber-button-main">返回时空</span>
+            <span class="cyber-button-sub">GO BACK</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="empty-state" class="p-8 rounded-[2.5rem] shadow-2xl w-full max-w-sm text-center z-10 hidden" style="background-color: #e2e8e6;">
+    <h2 class="cinema-title text-xl mb-4 text-slate-700">该日期暂无精选影片</h2>
+    <p class="text-slate-500 text-sm mb-6">试试其他日期</p>
+    <button id="back-from-empty" class="bg-zinc-500 text-white py-3 px-6 rounded-xl cinema-title tracking-widest hover:bg-zinc-600 transition-all">
+      返回
+    </button>
+  </div>
+
+  <div id="result-card" class="card-container flex flex-col items-center hidden">
+    <div class="result-card-wrapper w-full max-w-[340px] min-w-0">
+      <div id="capture-area" class="polaroid-frame w-full">
+        <div class="film-perforations">
+          <span class="film-label" id="frame-num-top">15</span>
+          <div class="flex gap-1.5 flex-1 justify-center">
+            <div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div>
+          </div>
+          <span class="film-label">港片 HK</span>
+        </div>
+        <div class="polaroid-photo">
+          <div id="hero-section" class="relative hero-section overflow-hidden">
+            <!-- Hero content rendered by cardRenderer -->
+          </div>
+        </div>
+        <div class="film-perforations">
+          <span class="film-label" id="frame-num-bot">15</span>
+          <div class="flex gap-1.5 flex-1 justify-center">
+            <div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div><div class="hole"></div>
+          </div>
+          <span class="film-label" id="frame-id-bot">15A</span>
+        </div>
+        <div id="card-body" class="px-6 py-4 mt-2 rounded-sm" style="background-color: #e2e8e6;">
+          <p id="dynamic-text" class="text-slate-800 text-[11px] leading-relaxed vintage-text"></p>
+        </div>
+      </div>
+      <div class="flex gap-2 mt-4 px-2 pb-2">
+        <button id="download-btn" class="flex-1 min-w-0 bg-zinc-300 text-slate-700 py-3 rounded-xl text-sm font-bold hover:bg-zinc-400 transition-all">
+          返回
+        </button>
+        <button id="share-btn" class="flex-1 min-w-0 bg-zinc-500 text-white py-4 cinema-title tracking-widest text-sm rounded-xl transition-all hover:bg-zinc-600 active:bg-zinc-700">
+          下载
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="save-image-modal" class="fixed inset-0 z-50 hidden p-4" style="background: rgba(0,0,0,0.85);">
+    <div class="relative flex flex-col items-center justify-center w-full h-full">
+      <button id="save-modal-close" class="absolute top-4 right-4 text-white text-sm px-4 py-2 rounded bg-white/10 hover:bg-white/20" type="button">关闭</button>
+      <img id="save-modal-img" src="" alt="海报" class="max-w-full max-h-[80vh] object-contain rounded shadow-lg" style="-webkit-user-select: none; user-select: none;" />
+      <p class="text-white/80 text-sm mt-3">长按图片保存</p>
+    </div>
+  </div>
+
+  <div id="share-page" class="card-container flex flex-col items-center hidden">
+    <div class="share-page-wrapper">
+      <div id="capture-area-clapper" class="clapperboard-wrap">
+        <!-- 场记板内容由 clapperboardRenderer 渲染 -->
+      </div>
+      <div class="flex gap-2 mt-4 w-full max-w-[340px] share-buttons min-w-0">
+        <button id="back-from-share" class="flex-1 min-w-0 bg-zinc-300 text-slate-700 py-3 rounded-xl text-sm font-bold hover:bg-zinc-400 transition-all">
+          返回
+        </button>
+        <button id="share-export-btn" class="flex-1 min-w-0 bg-zinc-500 text-white py-4 cinema-title tracking-widest text-sm rounded-xl transition-all hover:bg-zinc-600 active:bg-zinc-700">
+          生成海报
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
